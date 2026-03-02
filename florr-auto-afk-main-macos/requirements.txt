@@ -1,0 +1,24 @@
+# macOS Requirements for florr-auto-afk-main
+
+# WARNING: Full Windows functionality NOT available on macOS
+# This provides LIMITED compatibility only
+
+# Core dependencies (working)
+pyautogui>=0.9.54
+opencv-python>=4.8.0
+numpy>=1.24.0
+Pillow>=10.0.0
+
+# ML/AI dependencies (working)
+torch>=2.0.0
+torchvision>=0.15.0
+ultralytics>=8.0.0
+
+# Configuration (working)
+PyYAML>=6.0
+
+# NOT available on macOS:
+# - pywin32 (Windows only)
+# - zbl (Windows only)
+# - pygetwindow (limited support)
+# - pyrect (limited support)

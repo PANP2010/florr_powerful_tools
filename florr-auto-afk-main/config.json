@@ -1,0 +1,91 @@
+{
+    "runs": {
+        "autoTakeOverWhenIdle": false,
+        "runningCountDown": -1,
+        "moveAfterAFK": true,
+        "rejoin": true,
+        "idleTimeThreshold": 10,
+        "idleDetInterval": 3,
+        "idleDetIntervalMax": 10,
+        "notify": true,
+        "sound": false,
+        "soundPath": "./gui/notify.mp3"
+    },
+    "exposure": {
+        "enable": false,
+        "moveInterval": 0.25,
+        "duration": 3
+    },
+    "gui": {
+        "language": "en-us",
+        "theme": "auto"
+    },
+    "extensions": {
+        "enable": true,
+        "host": "0.0.0.0",
+        "port": 8000,
+        "defaultRoute": "/ws",
+        "swapInterval": 2,
+        "bgRemove": true,
+        "uploadPath": false,
+        "autoChat": {
+            "enable": false,
+            "selfUsername": "enter <username> here or chat will respond to your own messages",
+            "chatType": "ollama",
+            "chatEndpoint": "http://localhost:11434/api/chat",
+            "chatAPIKey": "<YOUR_API_KEY>",
+            "chatModel": "qwen3:14b",
+            "chatKeepAlive": -1,
+            "historyMaxLength": 15,
+            "chatEnableThink": false,
+            "enableFullControl": false,
+            "chatCooldown": 5,
+            "chatWhitelist": [],
+            "chatBlacklist": [
+                "^Guest",
+                "^Unnamed"
+            ],
+            "chatScope": [
+                "Local",
+                "Whisper"
+            ],
+            "chatMaxDistance": null,
+            "chatRandomResponses": [
+                "hi",
+                "wtf",
+                "?",
+                "wow",
+                "????"
+            ],
+            "fullControl": {
+                "followDuration": 10000,
+                "steps": 5
+            }
+        },
+        "autoCalibrate": false
+    },
+    "advanced": {
+        "saveTrainData": true,
+        "moveMouse": true,
+        "useOBS": false,
+        "verbose": true,
+        "epochInterval": 8,
+        "optimizeQuantization": 1,
+        "rdpEpsilon": "0.2173913043478*width+0.4782608695652",
+        "saveImage": true,
+        "saveYOLOImage": true,
+        "extendLength": 30,
+        "mouseSpeed": 100,
+        "skipUpdate": false,
+        "environment": false,
+        "debug": false,
+        "forceYOLO": {
+            "det": false,
+            "seg": false
+        }
+    },
+    "yoloConfig": {
+        "segModel": "./models/afk-seg.pt",
+        "detModel": "./models/afk-det.pt"
+    }
+}

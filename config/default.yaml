@@ -1,0 +1,55 @@
+general:
+  language: zh_CN
+  theme: dark
+  log_level: INFO
+  auto_start: false
+  minimize_to_tray: true
+
+modules:
+  afk:
+    enabled: true
+    check_interval: 0.5
+    auto_respond: true
+    llm_enabled: false
+    llm_provider: ollama
+    llm_model: qwen2.5:14b
+    model_path: models/afk-det.pt
+  
+  pathing:
+    enabled: true
+    target_map: ocean
+    auto_navigate: false
+    avoid_danger: true
+    check_interval: 0.3
+    model_path: models/map_classifier.pth
+  
+  combat:
+    enabled: true
+    target_priority: nearest
+    auto_dodge: true
+    sandstorm_avoid: true
+    check_interval: 0.2
+  
+  stats:
+    enabled: true
+    track_petals: true
+    track_efficiency: true
+    export_format: json
+
+platform:
+  screen_capture: auto
+  input_method: pyautogui
+  capture_fps: 30
+  game_window: florr.io
+
+ui:
+  window_width: 1000
+  window_height: 700
+  opacity: 0.95
+  always_on_top: false
+  show_notifications: true
+
+paths:
+  models_dir: models
+  logs_dir: logs
+  screenshots_dir: assets/screenshots

@@ -1,0 +1,22 @@
+{
+	"folders": [
+		{
+			"name": "florr_powerful_tools",
+			"path": ".."
+		},
+		{
+			"name": "image",
+			"path": "../../florr_ai/image"
+		},
+		{
+			"name": "script",
+			"path": "../../florr_ai/script"
+		},
+		{
+			"path": "../../.."
+		}
+	],
+	"settings": {
+		"git.ignoreLimitWarning": true
+	}
+}

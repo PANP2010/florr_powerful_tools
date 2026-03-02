@@ -1,0 +1,30 @@
+# Florr Assistant Requirements
+# Core dependencies
+
+# UI Framework
+PyQt5>=5.15.0
+
+# AI/ML
+ultralytics>=8.0.0
+torch>=2.0.0
+torchvision>=0.15.0
+opencv-python>=4.8.0
+
+# Core
+numpy>=1.24.0
+pillow>=10.0.0
+pyyaml>=6.0
+
+# Cross-platform automation
+pyautogui>=0.9.54
+mss>=9.0.0
+
+# Optional: Platform-specific enhancements
+# Windows
+pywin32>=305; sys_platform == 'win32'
+
+# macOS
+pyobjc>=9.0; sys_platform == 'darwin'
+
+# Linux
+python-xlib>=0.33; sys_platform == 'linux'
