@@ -1,6 +1,7 @@
 """
 高质量模型训练脚本 V4 - Ubuntu 双卡 3090 服务器版
 支持 CUDA 多卡 DDP 训练
+使用 YOLOv8s 模型
 """
 
 import torch
@@ -9,9 +10,9 @@ from pathlib import Path
 import argparse
 
 
-def train(data_yaml: str, epochs: int = 80, batch: int = 64, imgsz: int = 640):
+def train(data_yaml: str, epochs: int = 80, batch: int = 32, imgsz: int = 640):
     print("=" * 60)
-    print("高质量模型训练 V4 - 双卡 3090")
+    print("高质量模型训练 V4 - 双卡 3090 (YOLOv8s)")
     print("=" * 60)
     
     if not torch.cuda.is_available():
@@ -28,7 +29,7 @@ def train(data_yaml: str, epochs: int = 80, batch: int = 64, imgsz: int = 640):
     
     print(f"\n数据集配置: {data_path}")
     
-    model = YOLO('yolov8n.pt')
+    model = YOLO('yolov8s.pt')
     
     effective_batch = batch * gpu_count
     print(f"\n单卡 batch: {batch}, 总 batch: {effective_batch}")

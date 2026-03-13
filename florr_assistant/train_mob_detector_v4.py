@@ -1,6 +1,7 @@
 """
 高质量模型训练脚本 V4
 使用更多数据、更小怪物尺寸训练
+使用 YOLOv8s 模型
 """
 
 import torch
@@ -22,7 +23,7 @@ def get_device():
 
 def train():
     print("=" * 60)
-    print("高质量模型训练 V4")
+    print("高质量模型训练 V4 (YOLOv8s)")
     print("=" * 60)
     
     device = get_device()
@@ -31,7 +32,7 @@ def train():
     
     print(f"\n数据集配置: {data_yaml}")
     
-    model = YOLO('yolov8n.pt')
+    model = YOLO('yolov8s.pt')
     
     print("\n开始训练...")
     results = model.train(

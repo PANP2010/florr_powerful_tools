@@ -1,0 +1,98 @@
+# YOLOv8 数据集配置文件模板
+# 用于云端训练平台（Kaggle/Colab）
+
+# 数据集根目录（在云端平台中需要修改为实际路径）
+path: /kaggle/input/florr-mob-dataset  # Kaggle路径示例
+# path: /content/drive/MyDrive/florr_dataset  # Colab路径示例
+# path: /root/florr_dataset  # 恒源云路径示例
+
+# 训练集和验证集路径（相对于path）
+train: train/images
+val: val/images
+
+# 类别数量
+nc: 81
+
+# 类别名称
+names:
+  0: ant_baby
+  1: ant_egg
+  2: ant_hole
+  3: ant_queen
+  4: ant_soldier
+  5: ant_worker
+  6: assembler
+  7: barrel
+  8: bee
+  9: beetle
+  10: beetle_hel
+  11: beetle_mummy
+  12: beetle_nazar
+  13: beetle_pharaoh
+  14: bubble
+  15: bumble_bee
+  16: bush
+  17: cactus
+  18: centipede
+  19: centipede_body
+  20: centipede_desert
+  21: centipede_desert_body
+  22: centipede_evil
+  23: centipede_evil_body
+  24: centipede_hel
+  25: centipede_hel_body
+  26: crab
+  27: crab_mecha
+  28: dandelion
+  29: digger
+  30: dummy
+  31: fire_ant_baby
+  32: fire_ant_burrow
+  33: fire_ant_egg
+  34: fire_ant_queen
+  35: fire_ant_soldier
+  36: fire_ant_worker
+  37: firefly
+  38: firefly_magic
+  39: fly
+  40: gambler
+  41: gambler_old
+  42: hornet
+  43: jellyfish
+  44: ladybug
+  45: ladybug_dark
+  46: ladybug_shiny
+  47: leafbug
+  48: leafbug_shiny
+  49: leech
+  50: leech_body
+  51: mantis
+  52: mecha_flower
+  53: mecha_flower_old
+  54: moth
+  55: oracle
+  56: roach
+  57: rock
+  58: sandstorm
+  59: scorpion
+  60: shell
+  61: spider
+  62: spider_hel
+  63: spider_mecha
+  64: sponge
+  65: square
+  66: starfish
+  67: termite_baby
+  68: termite_egg
+  69: termite_mound
+  70: termite_overmind
+  71: termite_soldier
+  72: termite_worker
+  73: titan
+  74: tomb
+  75: trader
+  76: wasp
+  77: wasp_hel
+  78: wasp_mecha
+  79: worm
+  80: worm_guts
