@@ -1,7 +1,7 @@
 """
 云端训练脚本 - Kaggle/Colab/恒源云
 支持数据生成和训练一体化
-使用 YOLOv8s 模型
+使用 YOLO26s 模型（Ultralytics 最新版本）
 """
 
 import os
@@ -34,10 +34,10 @@ def generate_dataset(mob_dir: str, bg_dir: str, output_dir: str, num_samples: in
 
 
 def train(data_yaml: str, epochs: int = 100, batch: int = 16, imgsz: int = 640,
-          project: str = './runs', name: str = 'mob_detector_yolov8s'):
-    """训练 YOLOv8s 模型"""
+          project: str = './runs', name: str = 'mob_detector_yolo26s'):
+    """训练 YOLO26s 模型"""
     print("\n" + "=" * 60)
-    print("步骤 2: 训练 YOLOv8s 模型")
+    print("步骤 2: 训练 YOLO26s 模型")
     print("=" * 60)
     
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -54,7 +54,7 @@ def train(data_yaml: str, epochs: int = 100, batch: int = 16, imgsz: int = 640,
     print(f"\n数据集配置: {data_path}")
     print(f"训练参数: epochs={epochs}, batch={batch}, imgsz={imgsz}")
     
-    model = YOLO('yolov8s.pt')
+    model = YOLO('yolo26s.pt')
     
     print("\n开始训练...")
     results = model.train(
@@ -114,7 +114,7 @@ def validate_model(model_path: str, data_yaml: str):
 
 
 def main():
-    parser = argparse.ArgumentParser(description='云端训练 YOLOv8s 怪物检测模型')
+    parser = argparse.ArgumentParser(description='云端训练 YOLO26s 怪物检测模型')
     parser.add_argument('--mode', type=str, default='all', 
                         choices=['generate', 'train', 'validate', 'all'],
                         help='运行模式: generate(仅生成数据), train(仅训练), validate(仅验证), all(完整流程)')
@@ -136,7 +136,7 @@ def main():
                         help='图像尺寸')
     parser.add_argument('--project', type=str, default='./runs',
                         help='项目保存路径')
-    parser.add_argument('--name', type=str, default='mob_detector_yolov8s',
+    parser.add_argument('--name', type=str, default='mob_detector_yolo26s',
                         help='实验名称')
     parser.add_argument('--model', type=str, default=None,
                         help='验证模型路径')

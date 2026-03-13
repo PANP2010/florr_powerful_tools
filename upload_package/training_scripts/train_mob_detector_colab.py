@@ -1,6 +1,7 @@
 """
-YOLOv8s Mob 检测器训练脚本 - 适用于免费 GPU 平台
+YOLO26s Mob 检测器训练脚本 - 适用于免费 GPU 平台
 支持: Google Colab, Kaggle Kernels
+使用 Ultralytics 最新 YOLO26s 模型
 """
 
 import torch
@@ -24,9 +25,9 @@ def get_device():
 
 
 def train(data_yaml: str, epochs: int = 100, batch: int = 16, imgsz: int = 640, 
-          project: str = './runs', name: str = 'mob_detector_yolov8s'):
+          project: str = './runs', name: str = 'mob_detector_yolo26s'):
     print("=" * 60)
-    print("YOLOv8s Mob 检测器训练")
+    print("YOLO26s Mob 检测器训练")
     print("=" * 60)
     
     device = get_device()
@@ -37,10 +38,10 @@ def train(data_yaml: str, epochs: int = 100, batch: int = 16, imgsz: int = 640,
     
     print(f"\n数据集配置: {data_path}")
     
-    model = YOLO('yolov8s.pt')
+    model = YOLO('yolo26s.pt')
     
     print(f"\n训练参数:")
-    print(f"  - 模型: YOLOv8s")
+    print(f"  - 模型: YOLO26s")
     print(f"  - Epochs: {epochs}")
     print(f"  - Batch size: {batch}")
     print(f"  - Image size: {imgsz}")
@@ -91,13 +92,13 @@ def train(data_yaml: str, epochs: int = 100, batch: int = 16, imgsz: int = 640,
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='训练 YOLOv8s 怪物检测模型')
+    parser = argparse.ArgumentParser(description='训练 YOLO26s 怪物检测模型')
     parser.add_argument('--data', type=str, required=True, help='数据集配置文件路径 (data.yaml)')
     parser.add_argument('--epochs', type=int, default=100, help='训练轮数 (默认: 100)')
     parser.add_argument('--batch', type=int, default=16, help='Batch size (默认: 16)')
     parser.add_argument('--imgsz', type=int, default=640, help='图像尺寸 (默认: 640)')
     parser.add_argument('--project', type=str, default='./runs', help='项目保存路径')
-    parser.add_argument('--name', type=str, default='mob_detector_yolov8s', help='实验名称')
+    parser.add_argument('--name', type=str, default='mob_detector_yolo26s', help='实验名称')
     
     args = parser.parse_args()
     
