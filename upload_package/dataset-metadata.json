@@ -1,0 +1,18 @@
+{
+  "title": "Florr Mob Training Package - YOLO26s",
+  "id": "PANP2010/florr-mob-training-package",
+  "licenses": [
+    {
+      "name": "CC0-1.0"
+    }
+  ],
+  "keywords": [
+    "computer-vision",
+    "object-detection",
+    "yolo",
+    "game",
+    "florr"
+  ],
+  "collaborators": [],
+  "data": []
+}

@@ -35,13 +35,28 @@ florr_powerful_tools/
 │       ├── afk/              # AFK防护模块
 │       ├── pathing/          # 自动寻路模块
 │       ├── combat/           # 自动战斗模块
+│       ├── data_collector/   # 数据收集模块
 │       └── stats/            # 数据统计模块
+│
+├── upload_package/           # 云端训练包 ⭐ 新增
+│   ├── mob_images/           # 77种Mob图像
+│   ├── backgrounds/          # 地图背景
+│   ├── dataset/              # 验证集
+│   └── scripts/              # YOLO26s训练脚本
+│
+├── train_package/            # 本地训练包 ⭐ 新增
+│   ├── mob_images/           # 77种Mob图像
+│   ├── backgrounds/          # 地图背景
+│   └── scripts/              # 本地训练脚本
+│
+├── florr_knowledge_base/     # 游戏知识库 ⭐ 新增
+│   ├── data/                 # Wiki数据
+│   └── scripts/              # 爬虫脚本
 │
 ├── florr-auto-afk-main/      # AFK检测模块
 ├── florr-auto-pathing/       # 自动寻路模块
 ├── florr-auto-framework-pytorch/  # AI训练框架
 ├── florr-auto-sszone/        # 自动刷怪模块
-├── overlay/                  # 游戏悬浮UI
 ├── assets/                   # 资源文件
 ├── config/                   # 配置文件
 └── docs/                     # 文档
@@ -280,13 +295,37 @@ ollama run qwen3:14b
 
 ---
 
+## 🚀 云端训练 (YOLO26s)
+
+### 快速开始
+
+```bash
+# Kaggle/Colab
+!python scripts/train_cloud.py --mode all --num-samples 5000 --epochs 100 --batch 16
+
+# 恒源云 (3090/4090)
+python scripts/train_cloud.py --mode all --num-samples 10000 --epochs 150 --batch 32
+```
+
+### YOLO26s 优势
+
+| 特性 | YOLOv8s | YOLO26s | 提升 |
+|------|---------|---------|------|
+| mAP50-95 | 44.8% | 48.6% | +3.8% |
+| 参数量 | 11.2M | 9.5M | -15% |
+| CPU推理 | 基准 | +43% | 更快 |
+
+详见 [免费GPU训练指南](docs/FREE_GPU_TRAINING_GUIDE.md)
+
+---
+
 ## 技术栈
 
 | 类别 | 技术 |
 |-----|------|
 | 编程语言 | Python 3.9+ |
 | 计算机视觉 | OpenCV, PIL |
-| 深度学习 | PyTorch, Ultralytics (YOLO) |
+| 深度学习 | PyTorch, Ultralytics (YOLO26) |
 | GUI框架 | PyQt5, Tkinter |
 | Web框架 | FastAPI, WebSocket |
 | 自动化 | PyAutoGUI, PyWin32 |
@@ -379,4 +418,4 @@ pytest tests/
 
 ---
 
-*最后更新: 2026-02-21*
+*最后更新: 2026-03-14*
