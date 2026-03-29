@@ -1,6 +1,9 @@
 import time
 from dataset_utils import *
 
+# Dynamically detect screen resolution
+_SCREEN_W, _SCREEN_H = pyautogui.size()
+
 if_attack = False
 if_defend = False
 mobs = []
@@ -29,7 +32,7 @@ def mouse_pos_thread():
     ]
     while True:
         pyautogui.keyDown("g")
-        frame = pyautogui.screenshot(region=(0, 0, 1920, 1080))
+        frame = pyautogui.screenshot(region=(0, 0, _SCREEN_W, _SCREEN_H))
         open_cv_image = np.array(frame)
         open_cv_image = cv2.cvtColor(open_cv_image, cv2.COLOR_RGB2BGR)
         toggle_yinyang = get_if_equip(open_cv_image, yinyang_templates)

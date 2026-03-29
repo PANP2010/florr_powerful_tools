@@ -98,6 +98,14 @@ class CrossPlatformBase(PlatformBase):
         self._pyautogui = pyautogui
         self._pyautogui.FAILSAFE = True
         self._pyautogui.PAUSE = 0.01
+        
+        self._has_mss = False
+        try:
+            import mss
+            self._mss = mss.mss()
+            self._has_mss = True
+        except Exception:
+            self._has_mss = False
     
     def get_platform_type(self) -> PlatformType:
         system = platform.system().lower()
@@ -110,18 +118,32 @@ class CrossPlatformBase(PlatformBase):
         return PlatformType.UNKNOWN
     
     def get_screen_size(self) -> Tuple[int, int]:
+        if self._has_mss:
+            monitor = self._mss.monitors[0]
+            return monitor["width"], monitor["height"]
         return self._pyautogui.size()
     
     def capture_screen(self, region: Optional[Tuple[int, int, int, int]] = None) -> np.ndarray:
         import cv2
         
-        if region:
-            x, y, w, h = region
-            screenshot = self._pyautogui.screenshot(region=(x, y, w, h))
+        if self._has_mss:
+            if region:
+                x, y, w, h = region
+                monitor = {"top": y, "left": x, "width": w, "height": h}
+            else:
+                monitor = self._mss.monitors[0]
+            
+            screenshot = self._mss.grab(monitor)
+            img = np.array(screenshot)
+            img = cv2.cvtColor(img, cv2.COLOR_BGRA2BGR)
+            return img
         else:
-            screenshot = self._pyautogui.screenshot()
-        
-        return cv2.cvtColor(np.array(screenshot), cv2.COLOR_RGB2BGR)
+            if region:
+                x, y, w, h = region
+                screenshot = self._pyautogui.screenshot(region=(x, y, w, h))
+            else:
+                screenshot = self._pyautogui.screenshot()
+            return cv2.cvtColor(np.array(screenshot), cv2.COLOR_RGB2BGR)
     
     def capture_window(self, window_title: str) -> Optional[np.ndarray]:
         window_id = self.find_window(window_title)
@@ -213,21 +235,96 @@ class WindowsPlatform(CrossPlatformBase):
 class MacOSPlatform(CrossPlatformBase):
     def __init__(self):
         super().__init__()
+        self._has_appkit = False
+        self._has_mss = False
+        
         try:
-            from AppKit import NSWorkspace
-            self._workspace = NSWorkspace.sharedWorkspace()
+            from AppKit import NSWorkspace, NSApplication
+            self._NSWorkspace = NSWorkspace
+            self._NSApplication = NSApplication
             self._has_appkit = True
         except ImportError:
-            self._has_appkit = False
+            pass
+        
+        try:
+            import mss
+            self._mss = mss.mss()
+            self._has_mss = True
+        except ImportError:
+            self._has_mss = False
+    
+    def capture_screen(self, region: Optional[Tuple[int, int, int, int]] = None) -> np.ndarray:
+        import cv2
+        
+        if self._has_mss:
+            if region:
+                x, y, w, h = region
+                monitor = {"top": y, "left": x, "width": w, "height": h}
+            else:
+                monitor = self._mss.monitors[0]
+            
+            screenshot = self._mss.grab(monitor)
+            img = np.array(screenshot)
+            img = cv2.cvtColor(img, cv2.COLOR_BGRA2BGR)
+            return img
+        else:
+            return super().capture_screen(region)
     
     def find_window(self, title: str) -> Optional[int]:
-        return None
+        if not self._has_appkit:
+            return None
+        
+        try:
+            workspace = self._NSWorkspace.sharedWorkspace()
+            for app in workspace.runningApplications():
+                if app.isActive():
+                    try:
+                        app_windows = app.windows()
+                        for window in app_windows:
+                            window_title = window.title()
+                            if window_title and title.lower() in window_title.lower():
+                                return window.windowNumber()
+                    except Exception:
+                        continue
+            return None
+        except Exception:
+            return None
     
-    def get_window_rect(self, window_id: int) -> Optional[Tuple[int, int, int, int]]:
-        return None
+    def get_window_rect(self, window_id: Optional[int]) -> Optional[Tuple[int, int, int, int]]:
+        if not self._has_appkit or window_id is None:
+            return None
+        
+        try:
+            from AppKit import NSApplication
+            
+            app = NSApplication.sharedApplication()
+            for window in app.orderedWindows():
+                if window.windowNumber() == window_id:
+                    frame = window.frame()
+                    x = int(frame.origin.x)
+                    y = int(frame.origin.y)
+                    w = int(frame.size.width)
+                    h = int(frame.size.height)
+                    return (x, y, x + w, y + h)
+            return None
+        except Exception:
+            return None
     
-    def bring_window_to_front(self, window_id: int):
-        pass
+    def bring_window_to_front(self, window_id: Optional[int]):
+        if not self._has_appkit or window_id is None:
+            return
+        
+        try:
+            from AppKit import NSApplication
+            
+            app = NSApplication.sharedApplication()
+            for window in app.orderedWindows():
+                if window.windowNumber() == window_id:
+                    window.makeKeyAndOrderFront_(None)
+                    window.orderFrontRegardless()
+                    break
+        except Exception:
+            pass
 
 
 class LinuxPlatform(CrossPlatformBase):

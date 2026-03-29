@@ -25,6 +25,10 @@ console = Console()
 SCREEN_WIDTH, SCREEN_HEIGHT = pyautogui.size()
 MAX_MOBS_NUM = 10
 
+# Resolution-adaptive derived values
+_HALF_W = SCREEN_WIDTH // 2
+_HALF_H = SCREEN_HEIGHT // 2
+
 model = YOLO("./models/stf_det.pt")
 
 
@@ -63,7 +67,7 @@ def check_health():
                     return True
         return False
 
-    img = pyautogui.screenshot(region=[0, 0, 1920, 1080])
+    img = pyautogui.screenshot(region=[0, 0, SCREEN_WIDTH, SCREEN_HEIGHT])
     health_num = 4
     left_4 = 116
     right_96 = 278
@@ -98,7 +102,7 @@ def check_health():
                     return True
         return False
 
-    img = pyautogui.screenshot(region=[0, 0, 1920, 1080])
+    img = pyautogui.screenshot(region=[0, 0, SCREEN_WIDTH, SCREEN_HEIGHT])
     health_num = 4
     left_4 = 116
     right_96 = 278

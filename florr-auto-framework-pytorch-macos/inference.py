@@ -2,6 +2,11 @@ from dataset_utils import *
 from pynput import keyboard
 import time
 
+# Dynamically detect screen resolution
+SCREEN_W, SCREEN_H = pyautogui.size()
+HALF_W = SCREEN_W // 2
+HALF_H = SCREEN_H // 2
+
 health = 0
 mobs = []
 action = {"move_x": 0, "move_y": 0, "attack": 0, "defend": 0}
@@ -29,7 +34,7 @@ def key_press(key):
 def yolo_thread():
     global mobs
     while True:
-        frame = pyautogui.screenshot(region=(0, 0, 1920, 1080))
+        frame = pyautogui.screenshot(region=(0, 0, SCREEN_W, SCREEN_H))
         open_cv_image = np.array(frame)
         open_cv_image = cv2.cvtColor(open_cv_image, cv2.COLOR_RGB2BGR)
         result = model.predict(frame, verbose=False)[0]
@@ -50,8 +55,8 @@ def yolo_thread():
             y_2 = new_method[3]
             x_avg = (x_1 + x_2) / 2
             y_avg = (y_1 + y_2) / 2
-            dist = math.sqrt((x_avg - SCREEN_WIDTH//2)**2 +
-                             (y_avg - SCREEN_HEIGHT//2)**2)
+            dist = math.sqrt((x_avg - HALF_W)**2 +
+                             (y_avg - HALF_H)**2)
             name = new_method[5]
             object = names[name]
             mobs.append({"name": object, "x_1": x_1,
@@ -64,18 +69,18 @@ def inference_thread():
     while True:
         health = check_health()["percent"]
         dict = {"health": health, "if_attack": False,
-                "if_defend": False, "mouse_pos_x": 1920//2, "mouse_pos_y": 1080//2, "mob_pos": mobs, "degree": degree, "yinyang": toggle_yinyang, "pred_yinyang": 0}
+                "if_defend": False, "mouse_pos_x": HALF_W, "mouse_pos_y": HALF_H, "mob_pos": mobs, "degree": degree, "yinyang": toggle_yinyang, "pred_yinyang": 0}
         state = state2dataset(dict)["state"]
         action = get_action(inf_model, state)
         print(action)
-        mouse_pos_x = int(action["move_x"]*(1920//2) + (1920//2))
-        mouse_pos_y = int(action["move_y"]*(1080//2) + (1080//2))
+        mouse_pos_x = int(action["move_x"]*HALF_W + HALF_W)
+        mouse_pos_y = int(action["move_y"]*HALF_H + HALF_H)
 
 
 def graph_thread():
     global mobs
     while True:
-        frame = pyautogui.screenshot(region=(0, 0, 1920, 1080))
+        frame = pyautogui.screenshot(region=(0, 0, SCREEN_W, SCREEN_H))
         open_cv_image = np.array(frame)
         open_cv_image = cv2.cvtColor(open_cv_image, cv2.COLOR_RGB2BGR)
         for mob in mobs:
@@ -83,23 +88,23 @@ def graph_thread():
                           (mob["x_2"], mob["y_2"]), (0, 255, 0), 2)
             cv2.putText(open_cv_image, mob["name"], (mob["x_1"], mob["y_1"] - 10),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.9, (36, 255, 12), 2)
-        cv2.putText(open_cv_image, f"0: {action['attack']}", (10, 1080-20),
+        cv2.putText(open_cv_image, f"0: {action['attack']}", (10, SCREEN_H-20),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.9, (36, 255, 12), 2)
-        cv2.putText(open_cv_image, f"1: {action['defend']}", (10, 1080-45),
+        cv2.putText(open_cv_image, f"1: {action['defend']}", (10, SCREEN_H-45),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.9, (36, 255, 12), 2)
-        cv2.putText(open_cv_image, f"[{action['move_x']}, {action['move_y']}]", (10, 1080-70),
+        cv2.putText(open_cv_image, f"[{action['move_x']}, {action['move_y']}]", (10, SCREEN_H-70),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.9, (36, 255, 12), 2)
-        cv2.putText(open_cv_image, f"health: {health}", (10, 1080-95),
+        cv2.putText(open_cv_image, f"health: {health}", (10, SCREEN_H-95),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.9, (36, 255, 12), 2)
-        cv2.putText(open_cv_image, f"mobs: {len(mobs)}", (10, 1080-120),
+        cv2.putText(open_cv_image, f"mobs: {len(mobs)}", (10, SCREEN_H-120),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.9, (36, 255, 12), 2)
-        cv2.putText(open_cv_image, f"auto_suggest: {auto_suggest}", (10, 1080-145),
+        cv2.putText(open_cv_image, f"auto_suggest: {auto_suggest}", (10, SCREEN_H-145),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.9, (36, 255, 12), 2)
-        cv2.putText(open_cv_image, f"degree: {degree}", (10, 1080-170),
+        cv2.putText(open_cv_image, f"degree: {degree}", (10, SCREEN_H-170),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.9, (36, 255, 12), 2)
-        cv2.putText(open_cv_image, f"yinyang: {yinyang}", (10, 1080-195),
+        cv2.putText(open_cv_image, f"yinyang: {yinyang}", (10, SCREEN_H-195),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.9, (36, 255, 12), 2)
-        cv2.line(open_cv_image, (1920//2, 1080//2),
+        cv2.line(open_cv_image, (HALF_W, HALF_H),
                  (mouse_pos_x, mouse_pos_y), (255, 0, 0), 2)
         cv2.imshow("Image", open_cv_image)
         if cv2.waitKey(1) & 0xFF == ord('q'):
@@ -153,7 +158,7 @@ def action_thread():
     pyautogui.keyDown("g")
     while True:
         if auto_suggest:
-            open_cv_image = pyautogui.screenshot(region=(0, 0, 1920, 1080))
+            open_cv_image = pyautogui.screenshot(region=(0, 0, SCREEN_W, SCREEN_H))
             open_cv_image = np.array(open_cv_image)
             open_cv_image = cv2.cvtColor(open_cv_image, cv2.COLOR_RGB2BGR)
             toggle_yinyang = get_if_equip(open_cv_image, yinyang_templates)

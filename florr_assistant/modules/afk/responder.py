@@ -168,11 +168,14 @@ class AFKResponder(BaseModule):
         return None
     
     def _type_response(self, text: str):
+        import pyautogui
+        
+        # Click to focus the game window (click at current mouse pos, which should be over the game)
+        pyautogui.click()
+        time.sleep(0.2)
+        
         from ...core.platform import PlatformManager
         platform = PlatformManager()
-        
-        platform.key_click(x=None, y=None)
-        time.sleep(0.2)
         platform.key_type(text, interval=0.05)
         time.sleep(0.2)
         platform.key_press('enter')
