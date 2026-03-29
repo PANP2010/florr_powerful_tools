@@ -13,9 +13,24 @@ from typing import Optional, Dict, Any, List, Callable
 from collections import deque
 from dataclasses import dataclass, asdict
 import numpy as np
-import cv2
 
 from ..base import BaseModule, ModuleState
+
+# Lazy import cv2 - only needed for specific methods
+_cv2 = None
+
+def _get_cv2():
+    global _cv2
+    if _cv2 is None:
+        try:
+            import cv2 as _cv2_module
+            _cv2 = _cv2_module
+        except ImportError:
+            raise ImportError(
+                "opencv-python (cv2) is required for DataCollector. "
+                "Install it with: pip install opencv-python"
+            )
+    return _cv2
 
 
 @dataclass
@@ -289,12 +304,12 @@ class DataCollector(BaseModule):
             if health_bar_region.size == 0:
                 return {'percent': 100, 'florr': 32041}
             
-            hsv = cv2.cvtColor(health_bar_region, cv2.COLOR_BGR2HSV)
+            hsv = _get_cv2().cvtColor(health_bar_region, _get_cv2().COLOR_BGR2HSV)
             lower_green = np.array([35, 50, 50])
             upper_green = np.array([85, 255, 255])
-            mask = cv2.inRange(hsv, lower_green, upper_green)
+            mask = _get_cv2().inRange(hsv, lower_green, upper_green)
             
-            green_pixels = cv2.countNonZero(mask)
+            green_pixels = _get_cv2().countNonZero(mask)
             total_pixels = mask.shape[0] * mask.shape[1]
             
             percent = (green_pixels / total_pixels) * 100 if total_pixels > 0 else 0
