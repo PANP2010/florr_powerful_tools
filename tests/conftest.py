@@ -8,6 +8,11 @@ import os
 # Ensure florr_assistant is importable
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+# Add user site-packages for cv2 and other deps not in venv
+_user_packages = '/home/kuli/.local/lib/python3.12/site-packages'
+if _user_packages not in sys.path:
+    sys.path.insert(0, _user_packages)
+
 import pytest
 
 

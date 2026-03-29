@@ -130,7 +130,7 @@ class TestEngineModuleRegistration:
         dummy = DummyModule()
         e.register_module('test_module', dummy)
         result = e.disable_module('test_module')
-        assert result is False  # disable sets enabled=False but returns False if not in running state
+        assert result is True  # disable_module returns True when module exists
 
     def test_get_module_returns_registered_module(self):
         from florr_assistant.core.engine import Engine

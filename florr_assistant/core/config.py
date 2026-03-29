@@ -4,6 +4,7 @@ Config Manager - 配置管理器
 """
 
 import os
+import copy
 import json
 import yaml
 from pathlib import Path
@@ -256,4 +257,4 @@ class Config:
     
     @property
     def all(self) -> Dict[str, Any]:
-        return self._config.copy()
+        return copy.deepcopy(self._config)

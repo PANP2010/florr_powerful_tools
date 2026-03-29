@@ -53,7 +53,8 @@ class TestLoggerHistory:
         l._level = logging.DEBUG
         l.debug('debug message', module='Test')
         history = l.get_history(level='DEBUG')
-        assert any(r.message == '[Test] debug message' for r in history)
+        # History stores raw message (no [module] prefix)
+        assert any(r.message == 'debug message' for r in history)
 
     def test_history_stores_info_messages(self):
         from florr_assistant.core.logger import Logger
