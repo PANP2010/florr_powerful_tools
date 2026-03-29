@@ -6,6 +6,8 @@
 [![License](https://img.shields.io/badge/License-GPL%20v3-green?style=for-the-badge)](LICENSE)
 [![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey?style=for-the-badge)]()
 [![Last Commit](https://img.shields.io/github/last-commit/PANP2010/florr_powerful_tools?style=for-the-badge)]()
+[![CI](https://github.com/PANP2010/florr_powerful_tools/actions/workflows/ci.yml/badge.svg)](https://github.com/PANP2010/florr_powerful_tools/actions/workflows/ci.yml)
+[![Stars](https://img.shields.io/github/stars/PANP2010/florr_powerful_tools?style=for-the-badge)]()
 
 ---
 
@@ -14,6 +16,8 @@
 **Florr Powerful Tools** is a comprehensive automation framework for the popular [florr.io](https://florr.io) browser game. It combines computer vision, deep learning, and path-planning algorithms to provide intelligent game assistance — without cheating, just making the game more enjoyable.
 
 Whether you need AFK protection, want to auto-navigate maps, train custom AI models, or collect training data — this toolkit has you covered.
+
+![florr.io screenshot](screenshots/florr_io_screenshot.png)
 
 ---
 
