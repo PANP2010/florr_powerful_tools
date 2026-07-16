@@ -94,18 +94,25 @@ class PlatformBase(ABC):
 
 class CrossPlatformBase(PlatformBase):
     def __init__(self):
-        import pyautogui
-        self._pyautogui = pyautogui
-        self._pyautogui.FAILSAFE = True
-        self._pyautogui.PAUSE = 0.01
-        
+        self._pyautogui = None
+        self._mss = None
         self._has_mss = False
-        try:
-            import mss
-            self._mss = mss.mss()
-            self._has_mss = True
-        except Exception:
-            self._has_mss = False
+    
+    def _ensure_pyautogui(self):
+        if self._pyautogui is None:
+            import pyautogui
+            self._pyautogui = pyautogui
+            self._pyautogui.FAILSAFE = True
+            self._pyautogui.PAUSE = 0.01
+    
+    def _ensure_mss(self):
+        if not self._has_mss:
+            try:
+                import mss
+                self._mss = mss.mss()
+                self._has_mss = True
+            except Exception:
+                self._has_mss = False
     
     def get_platform_type(self) -> PlatformType:
         system = platform.system().lower()
@@ -118,15 +125,18 @@ class CrossPlatformBase(PlatformBase):
         return PlatformType.UNKNOWN
     
     def get_screen_size(self) -> Tuple[int, int]:
-        if self._has_mss:
+        self._ensure_mss()
+        if self._has_mss and self._mss:
             monitor = self._mss.monitors[0]
             return monitor["width"], monitor["height"]
+        self._ensure_pyautogui()
         return self._pyautogui.size()
     
     def capture_screen(self, region: Optional[Tuple[int, int, int, int]] = None) -> np.ndarray:
         import cv2
         
-        if self._has_mss:
+        self._ensure_mss()
+        if self._has_mss and self._mss:
             if region:
                 x, y, w, h = region
                 monitor = {"top": y, "left": x, "width": w, "height": h}
@@ -138,6 +148,7 @@ class CrossPlatformBase(PlatformBase):
             img = cv2.cvtColor(img, cv2.COLOR_BGRA2BGR)
             return img
         else:
+            self._ensure_pyautogui()
             if region:
                 x, y, w, h = region
                 screenshot = self._pyautogui.screenshot(region=(x, y, w, h))
@@ -157,28 +168,34 @@ class CrossPlatformBase(PlatformBase):
         return self.capture_screen(region=rect)
     
     def mouse_move(self, x: int, y: int, smooth: bool = True):
+        self._ensure_pyautogui()
         if smooth:
             self._pyautogui.moveTo(x, y, duration=0.2)
         else:
             self._pyautogui.moveTo(x, y)
     
     def mouse_click(self, x: int, y: int, button: str = 'left', clicks: int = 1):
+        self._ensure_pyautogui()
         self._pyautogui.click(x, y, clicks=clicks, button=button)
     
     def mouse_drag(self, start: Tuple[int, int], end: Tuple[int, int], duration: float = 0.5):
+        self._ensure_pyautogui()
         self._pyautogui.moveTo(start[0], start[1])
         self._pyautogui.drag(end[0] - start[0], end[1] - start[1], duration=duration)
     
     def key_press(self, key: str, modifiers: Optional[list] = None):
+        self._ensure_pyautogui()
         if modifiers:
             self._pyautogui.hotkey(*modifiers, key)
         else:
             self._pyautogui.press(key)
     
     def key_type(self, text: str, interval: float = 0.05):
+        self._ensure_pyautogui()
         self._pyautogui.write(text, interval=interval)
     
     def get_mouse_position(self) -> Tuple[int, int]:
+        self._ensure_pyautogui()
         return self._pyautogui.position()
     
     def find_window(self, title: str) -> Optional[int]:
@@ -194,16 +211,23 @@ class CrossPlatformBase(PlatformBase):
 class WindowsPlatform(CrossPlatformBase):
     def __init__(self):
         super().__init__()
-        try:
-            import win32gui
-            import win32con
-            self._win32gui = win32gui
-            self._win32con = win32con
-            self._has_win32 = True
-        except ImportError:
-            self._has_win32 = False
+        self._win32gui = None
+        self._win32con = None
+        self._has_win32 = False
+    
+    def _ensure_win32(self):
+        if not self._has_win32:
+            try:
+                import win32gui
+                import win32con
+                self._win32gui = win32gui
+                self._win32con = win32con
+                self._has_win32 = True
+            except ImportError:
+                self._has_win32 = False
     
     def find_window(self, title: str) -> Optional[int]:
+        self._ensure_win32()
         if not self._has_win32:
             return None
         
@@ -213,6 +237,7 @@ class WindowsPlatform(CrossPlatformBase):
             return None
     
     def get_window_rect(self, window_id: int) -> Optional[Tuple[int, int, int, int]]:
+        self._ensure_win32()
         if not self._has_win32:
             return None
         
@@ -222,6 +247,7 @@ class WindowsPlatform(CrossPlatformBase):
             return None
     
     def bring_window_to_front(self, window_id: int):
+        self._ensure_win32()
         if not self._has_win32:
             return
         
@@ -235,28 +261,25 @@ class WindowsPlatform(CrossPlatformBase):
 class MacOSPlatform(CrossPlatformBase):
     def __init__(self):
         super().__init__()
+        self._NSWorkspace = None
+        self._NSApplication = None
         self._has_appkit = False
-        self._has_mss = False
-        
-        try:
-            from AppKit import NSWorkspace, NSApplication
-            self._NSWorkspace = NSWorkspace
-            self._NSApplication = NSApplication
-            self._has_appkit = True
-        except ImportError:
-            pass
-        
-        try:
-            import mss
-            self._mss = mss.mss()
-            self._has_mss = True
-        except ImportError:
-            self._has_mss = False
+    
+    def _ensure_appkit(self):
+        if not self._has_appkit:
+            try:
+                from AppKit import NSWorkspace, NSApplication
+                self._NSWorkspace = NSWorkspace
+                self._NSApplication = NSApplication
+                self._has_appkit = True
+            except ImportError:
+                pass
     
     def capture_screen(self, region: Optional[Tuple[int, int, int, int]] = None) -> np.ndarray:
         import cv2
         
-        if self._has_mss:
+        self._ensure_mss()
+        if self._has_mss and self._mss:
             if region:
                 x, y, w, h = region
                 monitor = {"top": y, "left": x, "width": w, "height": h}
@@ -271,6 +294,7 @@ class MacOSPlatform(CrossPlatformBase):
             return super().capture_screen(region)
     
     def find_window(self, title: str) -> Optional[int]:
+        self._ensure_appkit()
         if not self._has_appkit:
             return None
         
@@ -330,12 +354,17 @@ class MacOSPlatform(CrossPlatformBase):
 class LinuxPlatform(CrossPlatformBase):
     def __init__(self):
         super().__init__()
-        try:
-            import Xlib.display
-            self._display = Xlib.display.Display()
-            self._has_xlib = True
-        except ImportError:
-            self._has_xlib = False
+        self._display = None
+        self._has_xlib = False
+    
+    def _ensure_xlib(self):
+        if not self._has_xlib:
+            try:
+                import Xlib.display
+                self._display = Xlib.display.Display()
+                self._has_xlib = True
+            except ImportError:
+                self._has_xlib = False
     
     def find_window(self, title: str) -> Optional[int]:
         return None
